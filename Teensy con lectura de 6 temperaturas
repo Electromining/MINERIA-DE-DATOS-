@@ -1,0 +1,134 @@
+/*
+   Programa Kitsensorica
+   Ajuste de temperatura
+   fecha:26-07-2022
+*/
+#include "SerialTransfer.h"
+//Variables globales
+unsigned long t_temp = 0;
+unsigned long t_print = 0;
+float convt = 3.3 / 4095;
+// Contadores
+int i;
+
+// Tensiones
+int m = 1024;
+int V1_read[1024];
+int V2_read[1024];
+int V3_read[1004];
+float aux1 = 0;
+// Coeficiente
+float a[3] = {0.01925927420234,  0.01925927420234, 0};
+float b[3] = {1, -0.9614814515953, 0};
+// Variables Filtro de Tensión
+float xV1[2] = {0, 0};
+float yV1[2] = {0, 0};
+float xV2[2] = {0, 0};
+float yV2[2] = {0, 0};
+float xV3[2] = {0, 0};
+float yV3[2] = {0, 0};
+//Variables de lectura
+int T1_read = 0;
+int T2_read = 0;
+int T3_read = 0;
+int T4_read = 0;
+int T5_read = 0;
+int T6_read = 0;
+// Variables de temperatura
+float T1 = 0;
+float T2 = 0;
+float T3 = 0;
+float T4 = 0;
+float T5 = 0;
+float T6 = 0;
+//Filtro de temperatura
+float alpha = 0.2543;
+float EMA_T1 = 0;
+float EMA_T2 = 0;
+float EMA_T3 = 0;
+float EMA_T4 = 0;
+float EMA_T5 = 0;
+float EMA_T6 = 0;
+
+//
+void setup() {
+  // put your setup code here, to run once:
+  analogReadResolution(12);
+  Serial.begin(9600);
+  t_temp = millis();
+  t_print = millis();
+}
+
+void loop() {
+  // Lecturas de Tensión
+  for (i = 0; i < m; i++) {
+    V1_read[i] = analogRead(A3) - 2048 ;
+    V2_read[i] = analogRead(A4) - 2048 ;
+    V3_read[i] = analogRead(A5) - 2048 ;
+  }
+  // Filtrado de Tesnión.
+  for (i = 0; i < m; i++) {
+    //V1
+    xV1[0] = V1_read[i] * convt * 927 ;
+    yV1[0] = a[0] * xV1[0] + a[1] * xV1[1] - b[1] * yV1[1];
+    xV1[1] = xV1[0];
+    yV1[1] = yV1[0];
+    // V2
+    xV2[0] = V2_read[i] * convt * 927 ;
+    yV2[0] = a[0] * xV2[0] + a[1] * xV2[1] - b[1] * yV2[1];
+    xV2[1] = xV2[0];
+    yV2[1] = yV2[0];
+    // V3
+    xV3[0] = V3_read[i] * convt * 927 ;
+    yV3[0] = a[0] * xV3[0] + a[1] * xV3[1] - b[1] * yV3[1];
+    xV3[1] = xV3[0];
+    yV3[1] = yV3[0];
+    //
+    //Impresión de tensión
+    //    Serial.print(yV1[0]);
+    //    Serial.print(" ");
+    //    Serial.print(yV2[0]);
+    //    Serial.print(" ");
+    //    Serial.println(yV3[0] );
+    //    delay(10);
+  }
+  //Lectura de Temepraturas.
+  if (millis() - t_temp > 55) {
+    t_temp = millis();
+    T1_read = analogRead(A10);
+    T2_read = analogRead(A11);
+    T3_read = analogRead(A12);
+    T4_read = analogRead(A13);
+    T5_read = analogRead(A14);
+    T6_read = analogRead(A15);
+    EMA_T1 = alpha * T1_read * convt + (1 - alpha) * EMA_T1;
+    EMA_T2 = alpha * T2_read * convt + (1 - alpha) * EMA_T2;
+    EMA_T3 = alpha * T3_read * convt + (1 - alpha) * EMA_T3;
+    EMA_T4 = alpha * T4_read * convt + (1 - alpha) * EMA_T4;
+    EMA_T5 = alpha * T5_read * convt + (1 - alpha) * EMA_T5;
+    EMA_T6 = alpha * T6_read * convt + (1 - alpha) * EMA_T6;
+  }
+  //Temperatura.
+  T1 = 2.05 * EMA_T1 * EMA_T1 + 58.51 * EMA_T1 - 1.052;
+  T2 = 2.05 * EMA_T2 * EMA_T2 + 58.51 * EMA_T2 - 1.052;
+  T3 = 2.05 * EMA_T3 * EMA_T3 + 58.51 * EMA_T3 - 1.052;
+  T4 = 2.05 * EMA_T4 * EMA_T4 + 58.51 * EMA_T4 - 1.052;
+  T5 = 2.05 * EMA_T5 * EMA_T5 + 58.51 * EMA_T5 - 1.052;
+  T6 = 2.05 * EMA_T6 * EMA_T6 + 58.51 * EMA_T6 - 1.052;
+  // Impresión de temperatura monitor serie
+  if (millis() - t_print > 500) {
+    t_print = millis();
+    Serial.print("T1d=" + String(T1));
+    Serial.print("  ");
+    Serial.print("T2=" + String(T2));
+    Serial.print("  ");
+    Serial.print("T3=" + String(T3));
+    Serial.print("  ");
+    Serial.print("T4=" + String(T4));
+    Serial.print("  ");
+    Serial.print("T5=" + String(T5));
+    Serial.print("  ");
+    Serial.println("T6=" + String(T6));
+  }
+
+}
