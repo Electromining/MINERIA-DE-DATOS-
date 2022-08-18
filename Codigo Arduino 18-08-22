@@ -339,7 +339,7 @@ void loop() {
   //  }
   //
   // Transmisión de datos
-  if (arr_Param[0] == 1) {
+if (arr_Param[0] == 1) {
     digitalWrite(13, HIGH);
     if (millis() - Tini > 400) {
       // Set data POTENCIOMETRO
@@ -393,63 +393,63 @@ void loop() {
       //
       // I1
       workingstruct.value = float(I1);
-      strcpy(workingstruct.label, "106-1");
+      strcpy(workingstruct.label, "200-0");
       //
       myTransfer.sendDatum(workingstruct);
       workingstruct.recieve_id += 1;
       //
       // I2
       workingstruct.value = float(I2);
-      strcpy(workingstruct.label, "107-1");
+      strcpy(workingstruct.label, "201-0");
       //
       myTransfer.sendDatum(workingstruct);
       workingstruct.recieve_id += 1;
       //
       // I3
       workingstruct.value = float(I1);
-      strcpy(workingstruct.label, "108-1");
+      strcpy(workingstruct.label, "202-0");
       //
       myTransfer.sendDatum(workingstruct);
       workingstruct.recieve_id += 1;
       //
       // V1
       workingstruct.value = float(V1);
-      strcpy(workingstruct.label, "109-1");
+      strcpy(workingstruct.label, "300-0");
       //
       myTransfer.sendDatum(workingstruct);
       workingstruct.recieve_id += 1;
       //
       // V2
       workingstruct.value = float(V2);
-      strcpy(workingstruct.label, "110-1");
+      strcpy(workingstruct.label, "301-0");
       //
       myTransfer.sendDatum(workingstruct);
       workingstruct.recieve_id += 1;
       //
       // V3
       workingstruct.value = float(V1);
-      strcpy(workingstruct.label, "111-1");
+      strcpy(workingstruct.label, "302-0");
       //
       myTransfer.sendDatum(workingstruct);
       workingstruct.recieve_id += 1;
       //
       // RPM
       workingstruct.value = float(RPM);
-      strcpy(workingstruct.label, "112-1");
+      strcpy(workingstruct.label, "400-0");
       //
       myTransfer.sendDatum(workingstruct);
       workingstruct.recieve_id += 1;
       //
       //  Vibración 1
       workingstruct.value = float(Vib1);
-      strcpy(workingstruct.label, "113-1");
+      strcpy(workingstruct.label, "500-2");
       //
       myTransfer.sendDatum(workingstruct);
       workingstruct.recieve_id += 1;
 
       //   Vibración 2
       workingstruct.value = float(Vib2);
-      strcpy(workingstruct.label, "114-1");
+      strcpy(workingstruct.label, "501-2");
       //
       myTransfer.sendDatum(workingstruct);
       workingstruct.recieve_id += 1;
